@@ -1,3 +1,2 @@
 polyinterface>=2.0.28
 requests>=2.20
-urllib3>=1.23

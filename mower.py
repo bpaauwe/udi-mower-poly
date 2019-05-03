@@ -207,10 +207,10 @@ class mowerNode(polyinterface.Node):
                 'Authorization' : 'Bearer ' + self.token,
                 'Autorization-Provider': self.provider
                 }
-        LOGGER.info('Sending command %s to mower %s' % (command, self.internal_id)
+        LOGGER.info('Sending command %s to mower %s' % (command, self.internal_id))
         r = requests.post(self.api_url + 'mowers/%s/control/' % self.internal_id,
                 headers = headers,
-                json ={
+                data ={
                     'action': command
                     })
         r.raise_for_status()
