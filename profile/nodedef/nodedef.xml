@@ -1,0 +1,32 @@
+<nodeDefs>
+  <nodeDef id="husqvarna" nodeType="139" nls="ctl">
+    <editors />
+    <sts>
+      <st id="ST" editor="bool" />
+    </sts>
+    <cmds>
+      <sends />
+      <accepts>
+        <cmd id="DISCOVER" />
+        <cmd id="REMOVE_NOTICES_ALL" />
+        <cmd id="UPDATE_PROFILE" />
+      </accepts>
+    </cmds>
+  </nodeDef>
+
+	<nodeDef id="mower" nodeType="139" nls="mow">
+    <sts>
+	    <st id="ST" editor="status" />
+    </sts>
+    <cmds>
+	    <sends>
+		</sends>
+	    <accepts>
+			<cmd id="PARK" />
+			<cmd id="STOP" />
+			<cmd id="START" />
+	    </accepts>
+    </cmds>
+  </nodeDef>
+
+</nodeDefs>

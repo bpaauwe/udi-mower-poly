@@ -1,0 +1,18 @@
+# controller
+ND-husqvarna-NAME = Husqvarna Automower
+ND-husqvarna-ICON = Input
+CMD-ctl-DISCOVER-NAME = Re-Discover
+CMD-ctl-UPDATE_PROFILE-NAME = Update Profile
+CMD-ctl-REMOVE_NOTICES_ALL-NAME = Remove Notices
+ST-ctl-ST-NAME = NodeServer Online
+
+ND-mower-NAME = Automower
+ND-mower-ICON = Input
+ST-mow-ST-NAME = Mower status
+CMD-mow-PARK-NAME = Park the mower
+CMD-mow-START-NAME = Start the mower
+CMD-mow-STOP-NAME = Stop the mower
+
+EN_STATUS-0 = status 0
+EN_STATUS-1 = status 1
+EN_STATUS-2 = status 2

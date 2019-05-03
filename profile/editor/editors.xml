@@ -1,0 +1,8 @@
+<editors>
+    <editor id="status">
+        <range uom="25" nls="EN_STATUS" />
+    </editor>
+    <editor id="bool">
+		<range uom="2" subset="0,1" />
+    </editor>
+</editors>
