@@ -66,7 +66,7 @@ class Controller(polyinterface.Controller):
         if not self.configured:
             return
 
-        self.session = requests.Sessions()
+        self.session = requests.Session()
 
         response = self.session.post(self.base_url + 'token',
                 headers = {'Accept' : 'application/json', 'Content-type': 'application/json'},
