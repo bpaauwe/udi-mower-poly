@@ -31,6 +31,8 @@ class Controller(polyinterface.Controller):
         self.expires_in = ''
         self.connected = False
         self.session = None
+        self.token = None
+        self.provider = None
 
         self.poly.onConfig(self.process_config)
 
@@ -87,9 +89,11 @@ class Controller(polyinterface.Controller):
         # update session headers with token and provider from login
         # response
 
+        self.provider = json['data']['attributes']['provider']
+        self.token = json['data']['id'],
         self.session.headers.update({
             'Authorization': 'Bearer ' + json['data']['id'],
-            'Autorization-Provider': json['data']['attributes']['provider']
+            'Authorization-Provider': json['data']['attributes']['provider']
             })
 
         self.expires_in = json['data']['attributes']['expires_in']
@@ -106,6 +110,11 @@ class Controller(polyinterface.Controller):
         if not self.configured:
             LOGGER.info('Skipping connection because we aren\'t configured yet.')
             return
+
+        self.session.headers.update({
+            'Authorization': 'Bearer ' + self.token,
+            'Authorization-Provider': self.provider
+            })
 
         response = self.session.get(self.track_url + 'mowers',
                 headers = {
@@ -182,7 +191,7 @@ class mowerNode(polyinterface.Node):
                 'Accept' : 'application/json',
                 'Content-type': 'application/json',
                 'Authorization' : 'Bearer ' + self.token,
-                'Autorization-Provider': self.provider
+                'Authorization-Provider': self.provider
                 }
         r = requests.get(self.api_url + 'mowers/%s/status' % self.internal_id,
                 headers = headers)
@@ -205,7 +214,7 @@ class mowerNode(polyinterface.Node):
                 'Accept' : 'application/json',
                 'Content-type': 'application/json',
                 'Authorization' : 'Bearer ' + self.token,
-                'Autorization-Provider': self.provider
+                'Authorization-Provider': self.provider
                 }
         LOGGER.info('Sending command %s to mower %s' % (command, self.internal_id))
         r = requests.post(self.api_url + 'mowers/%s/control/' % self.internal_id,
