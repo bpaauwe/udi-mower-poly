@@ -90,7 +90,11 @@ class Controller(polyinterface.Controller):
         # response
 
         self.provider = json['data']['attributes']['provider']
-        self.token = json['data']['id'],
+        self.token = str(json['data']['id']),
+
+        LOGGER.info('provider = %s' % self.provider)
+        LOGGER.info('token = %s' % self.token)
+
         self.session.headers.update({
             'Authorization': 'Bearer ' + json['data']['id'],
             'Authorization-Provider': json['data']['attributes']['provider']
@@ -110,6 +114,9 @@ class Controller(polyinterface.Controller):
         if not self.configured:
             LOGGER.info('Skipping connection because we aren\'t configured yet.')
             return
+
+        LOGGER.info('in discover, provider = %s' % self.provider)
+        LOGGER.info('in discover, token = %s' % self.token)
 
         self.session.headers.update({
             'Authorization': 'Bearer ' + self.token,
