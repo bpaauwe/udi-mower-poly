@@ -31,7 +31,7 @@ class Controller(polyinterface.Controller):
         self.expires_in = ''
         self.connected = False
         self.session = None
-        self.token = None
+        self.token = ''
         self.provider = None
 
         self.poly.onConfig(self.process_config)
@@ -90,7 +90,7 @@ class Controller(polyinterface.Controller):
         # response
 
         self.provider = json['data']['attributes']['provider']
-        self.token = str(json['data']['id']),
+        self.token = str(json['data']['id'])
 
         LOGGER.info('provider = %s' % self.provider)
         LOGGER.info('token = %s' % self.token)
