@@ -231,24 +231,24 @@ class mowerNode(polyinterface.Node):
                     })
         r.raise_for_status()
 
-    def park(self):
-        send_command("PARK")
+    def park_mower(self, cmd_info):
+        self.send_command("PARK")
 
-    def start(self):
-        send_command("START")
+    def start_mower(self, cmd_info):
+        self.send_command("START")
 
-    def stop(self):
-        send_command("STOP")
+    def stop_mower(self, cmd_info):
+        self.send_command("STOP")
 
     commands = {
-            'PARK': park,
-            'START': start,
-            'STOP': stop,
+            'PARK': park_mower,
+            'START': start_mower,
+            'STOP': stop_mower,
             }
 
 if __name__ == "__main__":
     try:
-        polyglot = polyinterface.Interface('HusqvarnaMower')
+        polyglot = polyinterface.Interface('husqvarna')
         polyglot.start()
         control = Controller(polyglot)
         control.runForever()
