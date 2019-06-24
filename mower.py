@@ -11,7 +11,8 @@ except ImportError:
     CLOUD = True
 import sys
 import json
-import requests
+import automowy
+#import requests
 
 LOGGER = polyinterface.LOGGER
 
@@ -26,13 +27,9 @@ class Controller(polyinterface.Controller):
         self.myConfig = {}
         self.username = ''
         self.password = ''
-        self.base_url="https://iam-api.dss.husqvarnagroup.net/api/v3/"
-        self.track_url="https://amc-api.dss.husqvarnagroup.net/v1/"
-        self.expires_in = ''
         self.connected = False
         self.session = None
-        self.token = ''
-        self.provider = None
+        self.mower = None
 
         self.poly.onConfig(self.process_config)
 
@@ -43,14 +40,32 @@ class Controller(polyinterface.Controller):
             if config['customParams'] != self.myConfig:
                 changed = False
 
+                if 'Username' in self.myConfig:
+                    if self.myConfig['Username'] != config['customParams']['Username']:
+                        changed = True
+                elif 'Username' in config['customParams']:
+                    if config['customParams']['Username'] != "":
+                        changed = True
+
+                if 'Password' in self.myConfig:
+                    if self.myConfig['Password'] != config['customParams']['Password']:
+                        changed = True
+                elif 'Password' in config['customParams']:
+                    if config['customParams']['Password'] != "":
+                        changed = True
+
                 self.myConfig = config['customParams']
                 if changed:
+                    self.username = config['customParams']['Username']
+                    self.password = config['customParams']['Password']
+                    self.configured = True
                     self.removeNoticesAll()
+                    self.discover()
 
     def start(self):
         LOGGER.info('Starting node server')
         self.check_params()
-        self.authenticate()
+        self.session = automowy.AutomowySession()
         self.discover()
         LOGGER.info('Node server started')
 
@@ -61,47 +76,6 @@ class Controller(polyinterface.Controller):
         for node in self.nodes:
             if self.nodes[node].id == 'mower':
                 self.nodes[node].get_status
-
-    def authenticate(self):
-        LOGGER.info('Authenticate with Husqvarna API')
-
-        if not self.configured:
-            return
-
-        self.session = requests.Session()
-
-        response = self.session.post(self.base_url + 'token',
-                headers = {'Accept' : 'application/json', 'Content-type': 'application/json'},
-                json = {
-                    'data': {
-                        'attributes': {
-                            'password': self.password,
-                            'username': self.username
-                            },
-                        'type': 'token'
-                        }
-                    })
-        response.raise_for_status()
-
-        json = response.json()
-        LOGGER.info (json)
-
-        # update session headers with token and provider from login
-        # response
-
-        self.provider = json['data']['attributes']['provider']
-        self.token = str(json['data']['id'])
-
-        LOGGER.info('provider = %s' % self.provider)
-        LOGGER.info('token = %s' % self.token)
-
-        self.session.headers.update({
-            'Authorization': 'Bearer ' + json['data']['id'],
-            'Authorization-Provider': json['data']['attributes']['provider']
-            })
-
-        self.expires_in = json['data']['attributes']['expires_in']
-        self.connected = True
 
     def query(self):
         for node in self.nodes:
@@ -115,31 +89,20 @@ class Controller(polyinterface.Controller):
             LOGGER.info('Skipping connection because we aren\'t configured yet.')
             return
 
-        LOGGER.info('in discover, provider = %s' % self.provider)
-        LOGGER.info('in discover, token = %s' % self.token)
+        try:
+            self.mower = self.session.login(self.username, self.password).find_mower()
+            LOGGER.info('mower name = ' + self.mower.name)
+            LOGGER.info('mower id   = ' + self.mower.id)
+            LOGGER.info(self.mower.query('status'))
+            mower_node = mowerNode(self, self.address, 'automow', self.mower.name)
+            mower_node.internal_id = self.mower.id
+            mower_node.mower = self.mower
+        except:
+            LOGGER.error('Authentication failed, fake it')
+            mower_node = mowerNode(self, self.address, 'automow', 'test')
+            mower_node.internal_id = '100-1' 
 
-        self.session.headers.update({
-            'Authorization': 'Bearer ' + self.token,
-            'Authorization-Provider': self.provider
-            })
-
-        response = self.session.get(self.track_url + 'mowers',
-                headers = {
-                    'Accept' : 'application/json',
-                    'Content-type': 'application/json'})
-        response.raise_for_status()
-
-        for mower in response.json():
-            LOGGER.info('Adding node for:')
-            LOGGER.info('  Mower : ' + mower['name'])
-            LOGGER.info('     ID : ' + mower['id'])
-
-            mower_node = mowerNode(self, self.address, mower['id'], mower['name'])
-            mower_node.internal_id = mower['id']
-            mower_node.token = self.token
-            mower_node.provider = self.provider
-            mower_node.api_url = self.track_url
-            self.addNode(mower_node)
+        self.addNode(mower_node)
             
 
     # Delete the node server from Polyglot
@@ -148,6 +111,10 @@ class Controller(polyinterface.Controller):
 
     def stop(self):
         LOGGER.info('Stopping node server')
+        try:
+            self.session.logout()
+        except:
+            LOGGER.debug('session logout failed')
 
     def update_profile(self, command):
         st = self.poly.installprofile()
@@ -166,6 +133,9 @@ class Controller(polyinterface.Controller):
             'Username': self.username,
             'Password': self.password
             })
+
+        if self.username == '' or self.password == '':
+            self.configured = False
 
         self.removeNoticesAll()
 
@@ -186,69 +156,53 @@ class Controller(polyinterface.Controller):
 class mowerNode(polyinterface.Node):
     id = 'mower'
     internal_id = ''
-    token = ''
-    provider = ''
-    api_url = ''
+    mower = None
     drivers = [
             {'driver': 'ST', 'value': 0, 'uom': 25},   # status
             ]
 
     def get_status(self):
-        headers = {
-                'Accept' : 'application/json',
-                'Content-type': 'application/json',
-                'Authorization' : 'Bearer ' + self.token,
-                'Authorization-Provider': self.provider
-                }
-        r = requests.get(self.api_url + 'mowers/%s/status' % self.internal_id,
-                headers = headers)
-        r.raise_for_status()
-
-        jdata = r.json()
-        LOGGER.debug(jdata)
+        try:
+            json = self.mower.query('status')
+            LOGGER.debug(self.json)
+        except:
+            LOGGER.debug('Skipping status, no connection to mower')
 
         # TODO: What does the response look like?  We need to translate
         # whatever we get into the numeric value that the node can
         # use here.  Then do a 
         #     setDriver to set the node status value.
 
-    def send_command(self, command):
-        if command not in ['PARK', 'STOP', 'START']:
-            LOGGER.error("Unknown command %s" % command)
-            return
+    def park_mower(self, junk):
+        LOGGER.info(junk)
+        try:
+            self.mower.control('park')
+        except:
+            LOGGER.debug('Skipping control, no connection to mower')
 
-        headers = {
-                'Accept' : 'application/json',
-                'Content-type': 'application/json',
-                'Authorization' : 'Bearer ' + self.token,
-                'Authorization-Provider': self.provider
-                }
-        LOGGER.info('Sending command %s to mower %s' % (command, self.internal_id))
-        r = requests.post(self.api_url + 'mowers/%s/control/' % self.internal_id,
-                headers = headers,
-                data ={
-                    'action': command
-                    })
-        r.raise_for_status()
+    def start_mower(self, junk):
+        LOGGER.info(junk)
+        try:
+            self.mower.control('start')
+        except:
+            LOGGER.debug('Skipping control, no connection to mower')
 
-    def park(self):
-        send_command("PARK")
-
-    def start(self):
-        send_command("START")
-
-    def stop(self):
-        send_command("STOP")
+    def stop_mower(self, junk):
+        LOGGER.info(junk)
+        try:
+            self.mower.control('stop')
+        except:
+            LOGGER.debug('Skipping control, no connection to mower')
 
     commands = {
-            'PARK': park,
-            'START': start,
-            'STOP': stop,
+            'PARK': park_mower,
+            'START': start_mower,
+            'STOP': stop_mower,
             }
 
 if __name__ == "__main__":
     try:
-        polyglot = polyinterface.Interface('HusqvarnaMower')
+        polyglot = polyinterface.Interface('husqvarna')
         polyglot.start()
         control = Controller(polyglot)
         control.runForever()
