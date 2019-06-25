@@ -164,7 +164,7 @@ class mowerNode(polyinterface.Node):
     def get_status(self):
         try:
             json = self.mower.query('status')
-            LOGGER.debug(self.json)
+            LOGGER.info(self.json)
         except:
             LOGGER.debug('Skipping status, no connection to mower')
 
