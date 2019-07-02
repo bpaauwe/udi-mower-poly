@@ -20,7 +20,7 @@ class Controller(polyinterface.Controller):
     id = 'husqvarna'
     def __init__(self, polyglot):
         super(Controller, self).__init__(polyglot)
-        self.name = 'mower'
+        self.name = 'AutoMower'
         self.address = 'mower'
         self.primary = self.address
         self.configured = False
@@ -75,7 +75,10 @@ class Controller(polyinterface.Controller):
     def shortPoll(self):
         for node in self.nodes:
             if self.nodes[node].id == 'mower':
-                self.nodes[node].get_status
+                LOGGER.info('Calling node get_status')
+                self.nodes[node].get_status()
+            else:
+                LOGGER.info('Not getting status for node with id = ' + self.nodes[node].id)
 
     def query(self):
         for node in self.nodes:
@@ -103,6 +106,7 @@ class Controller(polyinterface.Controller):
             mower_node.internal_id = '100-1' 
 
         self.addNode(mower_node)
+        self.nodes['automow'].get_status()
             
 
     # Delete the node server from Polyglot
@@ -158,32 +162,96 @@ class mowerNode(polyinterface.Node):
     internal_id = ''
     mower = None
     drivers = [
-            {'driver': 'ST', 'value': 0, 'uom': 25},   # status
+            {'driver': 'ST', 'value': 0, 'uom': 2},   # status
+            {'driver': 'GV0', 'value': 0, 'uom': 25},   # battery
+            {'driver': 'GV1', 'value': 0, 'uom': 25},   # operating mode
+            {'driver': 'GV2', 'value': 0, 'uom': 25},   # last error
+            {'driver': 'GV3', 'value': 0, 'uom': 25},   # start source
+            {'driver': 'GV4', 'value': 0, 'uom': 56},   # start timestamp
             ]
+
+    def operating_modes(self, modename):
+        if modename == 'AUTO':
+            return 0
+        else:
+            LOGGER.info('Unknown next start source: ' + modename)
+            return 1
+
+    def source(self, sourcename):
+        if sourcename == 'COUNTDOWN_TIMER':
+            return 0
+        else:
+            LOGGER.info('Unknown next start source: ' + sourcename)
+            return 1
 
     def get_status(self):
         try:
             json = self.mower.query('status')
             LOGGER.info(self.json)
+
+            status = json['connected']
+            battery = json['batteryPercent']
+            mode = operating_mode(json['operatingMode'])
+            last_error = json['lastErrorCode']
+            start_source = source(json['nextStartSource'])
+            start_timestamp = json['nextStartTimestamp']
+
+            self.setDriver('ST', status, report=True, force=False)
+            self.setDriver('GV0', battery, report=True, force=False)
+            self.setDriver('GV1', mode, report=True, force=False)
+            self.setDriver('GV2', last_error, report=True, force=False)
+            self.setDriver('GV3', start_source, report=True, force=False)
+            self.setDriver('GV4', start_timestamp, report=True, force=False)
+
         except:
+            self.setDriver('ST', 1, report=True, force=False)
+            self.setDriver('GV0', 100, report=True, force=False)
+            self.setDriver('GV1', 0, report=True, force=True)
+            self.setDriver('GV2', 0, report=True, force=False)
+            self.setDriver('GV3', 1, report=True, force=True)
+            self.setDriver('GV4', 565656565, report=True, force=False)
             LOGGER.debug('Skipping status, no connection to mower')
 
         # TODO: What does the response look like?  We need to translate
         # whatever we get into the numeric value that the node can
         # use here.  Then do a 
         #     setDriver to set the node status value.
+        #
+        #   {
+        #      'connected': True,
+        #      'batteryPercent': 100,
+        #      'lastErrorCode': 0,
+        #      'nextStartTimestamp': xxxxxx,
+        #      'nextStartSource': 'COUNTDOWN_TIMER',
+        #      'lastErrorCodeTimestamp': xxxxxx,
+        #      'valueFound': True,
+        #      'storedTimestamp': xxxxxx,
+        #      'cachedSettingUUID': xxxxx,
+        #      'operatingMode': 'AUTO',
+        #      'lastLocations': []
+        #      'mowerStatus': {
+        #                        'activity': 'PARKED_IN_CS',
+        #                        'state': RESTRICTED',
+        #                        'type': 'NOT_APPLICABLE',
+        #                        'mode': 'MAIN_AREA',
+        #                        'restrictedReason': 'PARK_OVERRIDE'}
+        #      'errorConfirmable': False
+        #   }
 
     def park_mower(self, junk):
         LOGGER.info(junk)
         try:
-            self.mower.control('park')
+            self.mower.control('park/duration/timer')
         except:
             LOGGER.debug('Skipping control, no connection to mower')
 
-    def start_mower(self, junk):
-        LOGGER.info(junk)
+    def start_mower(self, params):
+        # looks like: {'cmd':'START', 'query': {'override.uom56': '360', }}
+        LOGGER.info(params)
+        period = params['query']['override.uom56']
+        LOGGER.info('time period = ' + period)
         try:
-            self.mower.control('start')
+            self.mower.control('start/override/period', {'period': period})
         except:
             LOGGER.debug('Skipping control, no connection to mower')
 

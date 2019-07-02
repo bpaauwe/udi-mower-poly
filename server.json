@@ -9,13 +9,13 @@
     "notice": "For testing purposes only",
     "shortPoll": "60",
     "longPoll": "60",
-    "profile_version": "0.0.1",
+    "profile_version": "0.0.2",
     "credits": [
     	{
     		"title": "Husqvarna Mower: A node server for control of AutoMower",
     		"author": "Bob Paauwe",
-    		"version": "0.0.1",
-    		"date": "May 2, 2010",
+    		"version": "0.0.2",
+    		"date": "July 2, 2019",
     		"source": "https://github.com/bpaauwe/udi-mower-poly",
 		"license": "https://github.com/bpaauwe/udi-mower-poly/LICENSE"
 		}

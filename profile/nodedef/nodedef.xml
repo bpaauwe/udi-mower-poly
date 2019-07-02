@@ -14,9 +14,14 @@
     </cmds>
   </nodeDef>
 
-	<nodeDef id="mower" nodeType="139" nls="mow">
+  <nodeDef id="mower" nodeType="139" nls="mow">
     <sts>
 	    <st id="ST" editor="status" />
+	    <st id="GV0" editor="percent" />
+	    <st id="GV1" editor="mode" />
+	    <st id="GV2" editor="error" />
+	    <st id="GV3" editor="start_source" />
+	    <st id="GV4" editor="start_timestamp" />
     </sts>
     <cmds>
 	    <sends>
@@ -24,7 +29,10 @@
 	    <accepts>
 			<cmd id="PARK" />
 			<cmd id="STOP" />
-			<cmd id="START" />
+			<cmd id="START">
+				<p id="override" editor="start_time" />
+			</cmd>
+			<cmd id="PAUSE" />
 	    </accepts>
     </cmds>
   </nodeDef>
