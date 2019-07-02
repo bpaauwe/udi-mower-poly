@@ -6,10 +6,10 @@
 		<range uom="2" subset="0,1" />
     </editor>
     <editor id="start_time">
-	    <range uom="56" min="0" max="1440" step="60" />
+	    <range uom="45" min="0" max="1440" step="60" />
     </editor>
     <editor id="percent">
-	    <range uom="17" min="0" max="100" />
+	    <range uom="51" min="0" max="100" />
     </editor>
     <editor id="mode">
         <range uom="25" subset="0-2" nls="EN_MODE" />
@@ -18,10 +18,30 @@
 	    <range uom="56" />
     </editor>
     <editor id="start_source">
-        <range uom="25" subset="0-2" nls="EN_SOURCE" />
+        <range uom="25" subset="0-4" nls="EN_SOURCE" />
     </editor>
     <editor id="start_timestamp">
 	    <range uom="56" />
+    </editor>
+
+    <editor id="st_mode">
+        <range uom="25" subset="0-1" nls="EN_STMODE" />
+    </editor>
+
+    <editor id="st_activity">
+        <range uom="25" subset="0-4" nls="EN_ACTIVITY" />
+    </editor>
+
+    <editor id="st_reason">
+        <range uom="25" subset="0-1" nls="EN_REASON" />
+    </editor>
+
+    <editor id="st_state">
+        <range uom="25" subset="0-2" nls="EN_STATE" />
+    </editor>
+
+    <editor id="st_type">
+        <range uom="25" subset="0-2" nls="EN_TYPE" />
     </editor>
 
 </editors>

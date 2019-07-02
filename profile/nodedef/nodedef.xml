@@ -22,6 +22,11 @@
 	    <st id="GV2" editor="error" />
 	    <st id="GV3" editor="start_source" />
 	    <st id="GV4" editor="start_timestamp" />
+	    <st id="GV5" editor="st_mode" />
+	    <st id="GV6" editor="st_activity" />
+	    <st id="GV7" editor="st_reason" />
+	    <st id="GV8" editor="st_state" />
+	    <st id="GV9" editor="st_type" />
     </sts>
     <cmds>
 	    <sends>

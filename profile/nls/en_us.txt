@@ -14,19 +14,42 @@ ST-mow-GV1-NAME = Operating Mode
 ST-mow-GV2-NAME = Last Error
 ST-mow-GV3-NAME = Start Source
 ST-mow-GV4-NAME = Start Timestamp
+ST-mow-GV5-NAME = Mower Status
+ST-mow-GV6-NAME = Mower Activity
+ST-mow-GV7-NAME = Restriction Reason
+ST-mow-GV8-NAME = Mower State
+ST-mow-GV9-NAME = Mow Type
 CMD-mow-PARK-NAME = Park the mower
 CMD-mow-START-NAME = Start the mower
 CMD-mow-STOP-NAME = Stop the mower
 CMD-mow-PAUSE-NAME = Pause the mower
 
-EN_STATUS-0 = status 0
-EN_STATUS-1 = status 1
-EN_STATUS-2 = status 2
+EN_STATE-0 = In Operation
+EN_STATE-1 = Paused
+EN_STATE-2 = Restricted
 
 EN_MODE-0 = Auto
-EN_MODE-1 = unknown 1
-EN_MODE-2 = unknown 2
+EN_MODE-1 = Home
+EN_MODE-2 = unknown
 
 EN_SOURCE-0 = Countdown Timer
-EN_SOURCE-1 = unknown 1
-EN_SOURCE-2 = unknown 2
+EN_SOURCE-1 = Charging
+EN_SOURCE-2 = Week Timer
+EN_SOURCE-3 = None
+EN_SOURCE-4 = unknown
+
+EN_TYPE-0 = Week Schedule
+EN_TYPE-1 = Override
+EN_TYPE-2 = Not Applicable
+
+EN_ACTIVITY-0 = Parked in CS
+EN_ACTIVITY-1 = Leaving
+EN_ACTIVITY-2 = Mowing
+EN_ACTIVITY-3 = Going Home
+EN_ACTIVITY-4 = Not Applicable
+
+EN_STMODE-0 = Home
+EN_STMODE-1 = Main Area
+
+EN_REASON-0 = Park Override
+EN_REASON-1 = Not Applicable
