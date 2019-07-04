@@ -241,31 +241,37 @@ class mowerNode(polyinterface.Node):
             json = self.mower.query('status')
             LOGGER.info(self.json)
 
-            status = json['connected']
-            battery = json['batteryPercent']
-            mode = operating_mode(json['operatingMode'])
-            last_error = json['lastErrorCode']
-            start_source = source(json['nextStartSource'])
-            start_timestamp = json['nextStartTimestamp']
-            st_mode = st_mode(json['mowerStatus']['mode'])
-            st_activity = st_activity(json['mowerStatus']['activity'])
-            st_state = st_state(json['mowerStatus']['state'])
-            st_reason = st_reason(json['mowerStatus']['restrictedReason'])
-            st_type = st_type(json['mowerStatus']['type'])
+            try:
+                status = json['connected']
+                battery = json['batteryPercent']
+                mode = operating_mode(json['operatingMode'])
+                last_error = json['lastErrorCode']
+                start_source = source(json['nextStartSource'])
+                start_timestamp = json['nextStartTimestamp']
+                st_mode = st_mode(json['mowerStatus']['mode'])
+                st_activity = st_activity(json['mowerStatus']['activity'])
+                st_state = st_state(json['mowerStatus']['state'])
+                st_reason = st_reason(json['mowerStatus']['restrictedReason'])
+                st_type = st_type(json['mowerStatus']['type'])
 
-            self.setDriver('ST', status, report=True, force=first)
-            self.setDriver('GV0', battery, report=True, force=first)
-            self.setDriver('GV1', mode, report=True, force=first)
-            self.setDriver('GV2', last_error, report=True, force=first)
-            self.setDriver('GV3', start_source, report=True, force=first)
-            self.setDriver('GV4', start_timestamp, report=True, force=first)
-            self.setDriver('GV5', st_mode, report=True, force=first)
-            self.setDriver('GV6', st_activity, report=True, force=first)
-            self.setDriver('GV7', st_state, report=True, force=first)
-            self.setDriver('GV8', st_reason, report=True, force=first)
-            self.setDriver('GV9', st_type, report=True, force=first)
+                try:
+                    self.setDriver('ST', status, report=True, force=first)
+                    self.setDriver('GV0', battery, report=True, force=first)
+                    self.setDriver('GV1', mode, report=True, force=first)
+                    self.setDriver('GV2', last_error, report=True, force=first)
+                    self.setDriver('GV3', start_source, report=True, force=first)
+                    self.setDriver('GV4', start_timestamp, report=True, force=first)
+                    self.setDriver('GV5', st_mode, report=True, force=first)
+                    self.setDriver('GV6', st_activity, report=True, force=first)
+                    self.setDriver('GV7', st_state, report=True, force=first)
+                    self.setDriver('GV8', st_reason, report=True, force=first)
+                    self.setDriver('GV9', st_type, report=True, force=first)
+                except:
+                    LOGGER.error('Failed to update node status')
+            except:
+                LOGGER.error('Failed to parse mower status JSON')
 
-        except:
+        except Exception as ex:
             self.setDriver('ST', 1, report=True, force=first)
             self.setDriver('GV0', 100, report=True, force=first)
             self.setDriver('GV1', 0, report=True, force=first)
@@ -277,7 +283,7 @@ class mowerNode(polyinterface.Node):
             self.setDriver('GV7', 0, report=True, force=first)
             self.setDriver('GV8', 0, report=True, force=first)
             self.setDriver('GV9', 1, report=True, force=first)
-            LOGGER.debug('Skipping status, no connection to mower')
+            LOGGER.debug('Skipping status: ' + ex.args[0])
 
         # TODO: What does the response look like?  We need to translate
         # whatever we get into the numeric value that the node can
