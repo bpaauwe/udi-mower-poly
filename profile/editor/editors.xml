@@ -1,27 +1,34 @@
 <editors>
     <editor id="status">
-		<range uom="2" subset="0,1" />
+        <range uom="2" subset="0,1" prec="0" />
     </editor>
+
     <editor id="bool">
-		<range uom="2" subset="0,1" />
+        <range uom="2" subset="0,1" />
     </editor>
+
     <editor id="start_time">
-	    <range uom="45" min="0" max="1440" step="60" />
+        <range uom="45" min="0" max="1440" step="60" prec="0" />
     </editor>
+
     <editor id="percent">
-	    <range uom="51" min="0" max="100" />
+        <range uom="51" min="0" max="100" prec="0" />
     </editor>
+
     <editor id="mode">
         <range uom="25" subset="0-2" nls="EN_MODE" />
     </editor>
+
     <editor id="error">
-	    <range uom="56" />
+        <range uom="56" min="0" max="100000" prec="0" />
     </editor>
+
     <editor id="start_source">
         <range uom="25" subset="0-4" nls="EN_SOURCE" />
     </editor>
+
     <editor id="start_timestamp">
-	    <range uom="56" />
+        <range uom="56" min="0" max="200000000" prec="0" />
     </editor>
 
     <editor id="st_mode">
