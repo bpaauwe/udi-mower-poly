@@ -239,7 +239,7 @@ class mowerNode(polyinterface.Node):
     def get_status(self, first):
         try:
             json = self.mower.query('status')
-            LOGGER.info(self.json)
+            LOGGER.info(json)
 
             try:
                 status = json['connected']
@@ -319,9 +319,9 @@ class mowerNode(polyinterface.Node):
             LOGGER.debug('Skipping control, no connection to mower')
 
     def start_mower(self, params):
-        # looks like: {'cmd':'START', 'query': {'override.uom56': '360', }}
+        # looks like: {'cmd':'START', 'query': {'override.uom45': '360', }}
         LOGGER.info(params)
-        period = params['query']['override.uom56']
+        period = params['query']['override.uom45']
         LOGGER.info('time period = ' + period)
         try:
             self.mower.control('start/override/period', {'period': period})
@@ -331,14 +331,21 @@ class mowerNode(polyinterface.Node):
     def stop_mower(self, junk):
         LOGGER.info(junk)
         try:
-            self.mower.control('stop')
+            self.mower.control('park')
         except:
             LOGGER.debug('Skipping control, no connection to mower')
+
+    def pause_mower(self, junk):
+        LOGGER.info(junk)
+        try:
+            self.mower.control('pause')
+        except:
 
     commands = {
             'PARK': park_mower,
             'START': start_mower,
             'STOP': stop_mower,
+            'PAUSE': pause_mower,
             }
 
 if __name__ == "__main__":
