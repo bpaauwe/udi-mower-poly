@@ -280,13 +280,13 @@ class mowerNode(polyinterface.Node):
             json = self.mower.query('status')
             LOGGER.info(json)
 
-            start_source = source(json)
-            mode = operating_mode(json)
-            st_mode = st_mode(json)
-            st_activity = st_activity(json)
-            st_state = st_state(json['mowerStatus']['state'])
-            st_reason = st_reason(json['mowerStatus']['restrictedReason'])
-            st_type = st_type(json['mowerStatus']['type'])
+            start_source = self.source(json)
+            mode = self.operating_mode(json)
+            st_mode = self.st_mode(json)
+            st_activity = self.st_activity(json)
+            st_state = self.st_state(json['mowerStatus']['state'])
+            st_reason = self.st_reason(json['mowerStatus']['restrictedReason'])
+            st_type = self.st_type(json['mowerStatus']['type'])
 
             try:
                 status = json['connected']
