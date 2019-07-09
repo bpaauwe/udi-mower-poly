@@ -340,6 +340,7 @@ class mowerNode(polyinterface.Node):
         try:
             self.mower.control('pause')
         except:
+            LOGGER.debug('Skipping control, no connection to mower')
 
     commands = {
             'PARK': park_mower,
