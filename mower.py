@@ -175,84 +175,124 @@ class mowerNode(polyinterface.Node):
             {'driver': 'GV9', 'value': 0, 'uom': 25},   # status type
             ]
 
-    def operating_modes(self, modename):
-        if modename == 'AUTO':
-            return 0
-        elif modename == 'HOME':
-            return 1
-        else:
-            LOGGER.info('Unknown next start source: ' + modename)
-            return 2
+    def operating_modes(self, json):
+        try:
+            modename = json['operatingMode']
+            if modename == 'AUTO':
+                return 0
+            elif modename == 'HOME':
+                return 1
+            else:
+                LOGGER.info('Unknown next start source: ' + modename)
+                return 2
+        except:
+            LOGGER.info('failed to parse operatingMode.')
 
-    def source(self, sourcename):
-        if sourcename == 'COUNTDOWN_TIMER':
-            return 0
-        elif sourcename == 'MOWER_CHARGING':
-            return 1
-        elif sourcename == 'WEEK_TIMER':
-            return 2
-        else:
-            return 3
+        return 2
 
-    def st_mode(self, name):
-        if name == 'HOME':
-            return 0
-        else:
-            return 1
+
+    def source(self, json):
+        try:
+            sourcename = json['nextStartSource']
+            if sourcename == 'COUNTDOWN_TIMER':
+                return 0
+            elif sourcename == 'MOWER_CHARGING':
+                return 1
+            elif sourcename == 'WEEK_TIMER':
+                return 2
+            else:
+                return 3
+        except:
+            LOGGER.info('failed to parse next start source.')
         
-    def st_activity(self, name):
-        if name == 'PARKED_IN_CS':
-            return 1
-        elif name == 'LEAVING':
-            return 2
-        elif name == 'MOWING':
-            return 3
-        elif name == 'GOING_HOME':
-            return 4
-        else:
-            return 5
+        return 3
 
-    def st_state(self, name):
-        if name == 'IN_OPERATION':
-            return 0
-        elif name == 'PAUSED':
-            return 1
-        elif name == 'RESTRICTED':
-            return 2
-        else:
-            LOGGER.info('Unknown mower state: ' + name)
+    def st_mode(self, json):
+        try:
+            name = json['mowerStatus']['mode']
+            if name == 'HOME':
+                return 0
+            else:
+                return 1
+        except:
+            LOGGER.info('failed to parse mower status mode.')
+
+        return 0
+        
+    def st_activity(self, json):
+        try:
+            name = json['mowerStatus']['activity']
+            if name == 'PARKED_IN_CS':
+                return 1
+            elif name == 'LEAVING':
+                return 2
+            elif name == 'MOWING':
+                return 3
+            elif name == 'GOING_HOME':
+                return 4
+            else:
+                return 5
+        except:
+            LOGGER.info('failed to parse mower status activity.')
+        return 5
+
+    def st_state(self, json):
+        try:
+            name = json['mowerStatus']['state']
+            if name == 'IN_OPERATION':
+                return 0
+            elif name == 'PAUSED':
+                return 1
+            elif name == 'RESTRICTED':
+                return 2
+            else:
+                LOGGER.info('Unknown mower state: ' + name)
+        except:
+            LOGGER.info('failed to parse mower status state.')
+        return 0
             
-    def st_reason(self, name):
-        if name == 'PARK_OVERRID':
-            return 0
-        else:
-            return 1
+    def st_reason(self, json):
+        try:
+            name = json['mowerStatus']['restrictedReason']
+            if name == 'PARK_OVERRIDE':
+                return 0
+            else:
+                return 1
+        except:
+            LOGGER.info('failed to parse mower status restricted reason.')
+        return 0
 
-    def st_type(self, name):
-        if name == 'WEEK_SCHEDULE':
-            return 0
-        elif name == 'OVERRIDE':
-            return 1
-        else:
-            return 2
+    def st_type(self, json):
+        try:
+            name = json['mowerStatus']['type']
+            if name == 'WEEK_SCHEDULE':
+                return 0
+            elif name == 'OVERRIDE':
+                return 1
+            else:
+                return 2
+        except:
+            LOGGER.info('failed to parse mower status type.')
+        return 2
 
     def get_status(self, first):
         try:
             json = self.mower.query('status')
             LOGGER.info(json)
 
+            start_source = source(json)
+            mode = operating_mode(json)
+            st_mode = st_mode(json)
+            st_activity = st_activity(json)
+            st_state = st_state(json['mowerStatus']['state'])
+            st_reason = st_reason(json['mowerStatus']['restrictedReason'])
+            st_type = st_type(json['mowerStatus']['type'])
+
             try:
                 status = json['connected']
                 battery = json['batteryPercent']
-                mode = operating_mode(json['operatingMode'])
                 last_error = json['lastErrorCode']
-                start_source = source(json['nextStartSource'])
                 start_timestamp = json['nextStartTimestamp']
-                st_mode = st_mode(json['mowerStatus']['mode'])
-                st_activity = st_activity(json['mowerStatus']['activity'])
-                st_state = st_state(json['mowerStatus']['state'])
-                st_reason = st_reason(json['mowerStatus']['restrictedReason'])
-                st_type = st_type(json['mowerStatus']['type'])
 
                 try:
                     self.setDriver('ST', status, report=True, force=first)
