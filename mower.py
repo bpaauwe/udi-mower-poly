@@ -207,7 +207,7 @@ class mowerNode(polyinterface.Node):
         
         return 3
 
-    def st_mode(self, json):
+    def st_mode_p(self, json):
         try:
             name = json['mowerStatus']['mode']
             if name == 'HOME':
@@ -219,7 +219,7 @@ class mowerNode(polyinterface.Node):
 
         return 0
         
-    def st_activity(self, json):
+    def st_activity_p(self, json):
         try:
             name = json['mowerStatus']['activity']
             if name == 'PARKED_IN_CS':
@@ -236,7 +236,7 @@ class mowerNode(polyinterface.Node):
             LOGGER.info('failed to parse mower status activity.')
         return 5
 
-    def st_state(self, json):
+    def st_state_p(self, json):
         try:
             name = json['mowerStatus']['state']
             if name == 'IN_OPERATION':
@@ -251,7 +251,7 @@ class mowerNode(polyinterface.Node):
             LOGGER.info('failed to parse mower status state.')
         return 0
             
-    def st_reason(self, json):
+    def st_reason_p(self, json):
         try:
             name = json['mowerStatus']['restrictedReason']
             if name == 'PARK_OVERRIDE':
@@ -262,7 +262,7 @@ class mowerNode(polyinterface.Node):
             LOGGER.info('failed to parse mower status restricted reason.')
         return 0
 
-    def st_type(self, json):
+    def st_type_p(self, json):
         try:
             name = json['mowerStatus']['type']
             if name == 'WEEK_SCHEDULE':
@@ -281,18 +281,23 @@ class mowerNode(polyinterface.Node):
             LOGGER.info(json)
 
             start_source = self.source(json)
-            mode = self.operating_mode(json)
-            st_mode = self.st_mode(json)
-            st_activity = self.st_activity(json)
-            st_state = self.st_state(json['mowerStatus']['state'])
-            st_reason = self.st_reason(json['mowerStatus']['restrictedReason'])
-            st_type = self.st_type(json['mowerStatus']['type'])
+            mode = self.operating_modes(json)
+            st_mode = self.st_mode_p(json)
+            st_activity = self.st_activity_p(json)
+            st_state = self.st_state_p(json)
+            st_reason = self.st_reason_p(json)
+            st_type = self.st_type_p(json)
 
             try:
                 status = json['connected']
                 battery = json['batteryPercent']
                 last_error = json['lastErrorCode']
+                # the timestamp is in milliseconds? which is too large
+                # to fit in 32 bits.  Is that a limitation of the node value?
+                # would be better to change this to something more readable
+                # but nodes can't handle text values yet.
                 start_timestamp = json['nextStartTimestamp']
+                start_timestamp = start_timestamp / 10
 
                 try:
                     self.setDriver('ST', status, report=True, force=first)
