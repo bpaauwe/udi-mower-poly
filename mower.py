@@ -102,7 +102,7 @@ class Controller(polyinterface.Controller):
             mower_node.mower = self.mower
         except:
             LOGGER.error('Authentication failed, fake it')
-            mower_node = mowerNode(self, self.address, 'automow', 'test')
+            mower_node = mowerNode(self, self.address, 'automow', 'unknown')
             mower_node.internal_id = '100-1' 
 
         self.addNode(mower_node)
@@ -223,15 +223,15 @@ class mowerNode(polyinterface.Node):
         try:
             name = json['mowerStatus']['activity']
             if name == 'PARKED_IN_CS':
-                return 1
+                return 0
             elif name == 'LEAVING':
-                return 2
+                return 1
             elif name == 'MOWING':
-                return 3
+                return 2
             elif name == 'GOING_HOME':
-                return 4
+                return 3
             else:
-                return 5
+                return 4
         except:
             LOGGER.info('failed to parse mower status activity.')
         return 5
@@ -308,8 +308,8 @@ class mowerNode(polyinterface.Node):
                     self.setDriver('GV4', start_timestamp, report=True, force=first)
                     self.setDriver('GV5', st_mode, report=True, force=first)
                     self.setDriver('GV6', st_activity, report=True, force=first)
-                    self.setDriver('GV7', st_state, report=True, force=first)
-                    self.setDriver('GV8', st_reason, report=True, force=first)
+                    self.setDriver('GV7', st_reason, report=True, force=first)
+                    self.setDriver('GV8', st_state, report=True, force=first)
                     self.setDriver('GV9', st_type, report=True, force=first)
                 except:
                     LOGGER.error('Failed to update node status')
