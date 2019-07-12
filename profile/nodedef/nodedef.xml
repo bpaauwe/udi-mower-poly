@@ -15,9 +15,8 @@
   </nodeDef>
 
   <nodeDef id="mower" nls="MOW">
-    <editors />
     <sts>
-      <st id="ST" editor="status" />
+      <st id="ST" editor="bool" />
       <st id="GV0" editor="percent" />
       <st id="GV1" editor="mode" />
       <st id="GV2" editor="error" />
