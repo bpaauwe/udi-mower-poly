@@ -40,7 +40,7 @@
     </editor>
 
     <editor id="st_reason">
-        <range uom="25" subset="0-1" nls="EN_REASON" />
+        <range uom="25" subset="0-2" nls="EN_REASON" />
     </editor>
 
     <editor id="st_state">
@@ -48,7 +48,7 @@
     </editor>
 
     <editor id="st_type">
-        <range uom="25" subset="0-2" nls="EN_TYPE" />
+        <range uom="25" subset="0-1" nls="EN_TYPE" />
     </editor>
 
 </editors>

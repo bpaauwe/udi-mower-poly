@@ -165,7 +165,7 @@ class mowerNode(polyinterface.Node):
             {'driver': 'ST', 'value': 0, 'uom': 2},   # status
             {'driver': 'GV0', 'value': 0, 'uom': 51},   # battery
             {'driver': 'GV1', 'value': 0, 'uom': 25},   # operating mode
-            {'driver': 'GV2', 'value': 0, 'uom': 25},   # last error
+            {'driver': 'GV2', 'value': 0, 'uom': 56},   # last error
             {'driver': 'GV3', 'value': 0, 'uom': 25},   # start source
             {'driver': 'GV4', 'value': 0, 'uom': 56},   # start timestamp
             {'driver': 'GV5', 'value': 0, 'uom': 25},   # status mode
@@ -256,8 +256,10 @@ class mowerNode(polyinterface.Node):
             name = json['mowerStatus']['restrictedReason']
             if name == 'PARK_OVERRIDE':
                 return 0
-            else:
+            elif name == 'WEEK_SCHEDULE':
                 return 1
+            else:
+                return 2
         except:
             LOGGER.info('failed to parse mower status restricted reason.')
         return 0
@@ -265,12 +267,10 @@ class mowerNode(polyinterface.Node):
     def st_type_p(self, json):
         try:
             name = json['mowerStatus']['type']
-            if name == 'WEEK_SCHEDULE':
+            if name == 'OVERRIDE':
                 return 0
-            elif name == 'OVERRIDE':
-                return 1
             else:
-                return 2
+                return 1
         except:
             LOGGER.info('failed to parse mower status type.')
         return 2
