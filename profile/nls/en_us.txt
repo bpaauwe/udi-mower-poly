@@ -20,7 +20,7 @@ ST-MOW-GV7-NAME = Restriction Reason
 ST-MOW-GV8-NAME = Mower Mode
 ST-MOW-GV9-NAME = Mow Type
 CMD-MOW-PARK-NAME = Park (Start on Next Timer)
-CMD-MOW-START-NAME = Start in
+CMD-MOW-START-NAME = Start (Override Timer for)
 CMD-MOW-STOP-NAME = Park (Until Further Notice)
 CMD-MOW-PAUSE-NAME = Pause
 

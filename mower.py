@@ -75,10 +75,7 @@ class Controller(polyinterface.Controller):
     def shortPoll(self):
         for node in self.nodes:
             if self.nodes[node].id == 'mower':
-                LOGGER.info('Calling node get_status')
                 self.nodes[node].get_status(False)
-            else:
-                LOGGER.info('Not getting status for node with id = ' + self.nodes[node].id)
 
     def query(self):
         for node in self.nodes:
@@ -101,6 +98,8 @@ class Controller(polyinterface.Controller):
             mower_node.internal_id = self.mower.id
             mower_node.mower = self.mower
         except:
+            # fake a mower node so that this can be tested without
+            # requireing an account.
             LOGGER.error('Authentication failed, fake it')
             mower_node = mowerNode(self, self.address, 'automow', 'unknown')
             mower_node.internal_id = '100-1' 
@@ -278,7 +277,7 @@ class mowerNode(polyinterface.Node):
     def get_status(self, first):
         try:
             json = self.mower.query('status')
-            LOGGER.info(json)
+            LOGGER.debug(json)
 
             start_source = self.source(json)
             mode = self.operating_modes(json)
@@ -357,7 +356,7 @@ class mowerNode(polyinterface.Node):
         #   }
 
     def park_mower(self, junk):
-        LOGGER.info(junk)
+        LOGGER.debug(junk)
         try:
             self.mower.control('park/duration/timer')
         except:
@@ -365,23 +364,23 @@ class mowerNode(polyinterface.Node):
 
     def start_mower(self, params):
         # looks like: {'cmd':'START', 'query': {'override.uom45': '360', }}
-        LOGGER.info(params)
+        LOGGER.debug(params)
         period = params['query']['override.uom45']
-        LOGGER.info('time period = ' + period)
+        LOGGER.debug('time period = ' + period)
         try:
             self.mower.control('start/override/period', {'period': period})
         except:
             LOGGER.debug('Skipping control, no connection to mower')
 
     def stop_mower(self, junk):
-        LOGGER.info(junk)
+        LOGGER.debug(junk)
         try:
             self.mower.control('park')
         except:
             LOGGER.debug('Skipping control, no connection to mower')
 
     def pause_mower(self, junk):
-        LOGGER.info(junk)
+        LOGGER.debug(junk)
         try:
             self.mower.control('pause')
         except:

@@ -56,6 +56,8 @@ The Husqvarna automower nodeserver keeps track of the version number and when a 
 
 # Release Notes
 
+- 1.0.0 07/16/2019
+   - First public release
 - 0.0.2 07/02/2019
    - Updated profile files to add pause command, set the start override period, and added additional status info.
 - 0.0.1 05/03/2019
