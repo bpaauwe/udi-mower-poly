@@ -1,5 +1,5 @@
 {
-    "name": "Husqvarna Mower",
+    "name": "Husqvarna-Mower",
     "docs": "http;//www.bobsplace.com/",
     "type": "python3",
     "executable": "mower.py",
