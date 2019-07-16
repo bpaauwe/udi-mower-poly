@@ -34,9 +34,9 @@
         <cmd id="START">
           <p id="override" editor="start_time" />
         </cmd>
-        <cmd id="STOP" />
         <cmd id="PAUSE" />
         <cmd id="PARK" />
+        <cmd id="STOP" />
       </accepts>
     </cmds>
   </nodeDef>

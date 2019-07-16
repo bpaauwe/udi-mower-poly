@@ -19,10 +19,10 @@ ST-MOW-GV6-NAME = Mower Activity
 ST-MOW-GV7-NAME = Restriction Reason
 ST-MOW-GV8-NAME = Mower Mode
 ST-MOW-GV9-NAME = Mow Type
-CMD-MOW-PARK-NAME = Park the mower
-CMD-MOW-START-NAME = Start the mower
-CMD-MOW-STOP-NAME = Stop the mower
-CMD-MOW-PAUSE-NAME = Pause the mower
+CMD-MOW-PARK-NAME = Park (Start on Next Timer)
+CMD-MOW-START-NAME = Start in
+CMD-MOW-STOP-NAME = Park (Until Further Notice)
+CMD-MOW-PAUSE-NAME = Pause
 
 EN_STATE-0 = In Operation
 EN_STATE-1 = Paused

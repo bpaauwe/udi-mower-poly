@@ -7,6 +7,8 @@ MIT license.
 
 This node server is intended to interact with Husqvarna Automowers. It can track the mowers status and send commands to control the mower.[Husqvarna](http://www.husqvarnagroup.com/en/automower-435x-awd) You will need account access to your mower(s) via the Automower API. 
 
+Currently, only one mower is supported.
+
 ## Installation
 
 1. Backup Your ISY in case of problems!
@@ -15,7 +17,7 @@ This node server is intended to interact with Husqvarna Automowers. It can track
 3. Add NodeServer in Polyglot Web
    * After the install completes, Polyglot will reboot your ISY, you can watch the status in the main polyglot log.
 4. Once your ISY is back up open the Admin Console.
-5. Configure the node server with your station ID.
+5. Configure the node server with your account username and password.
 
 ### Node Settings
 The settings for this node are:
@@ -24,6 +26,12 @@ The settings for this node are:
    * Query mower status.
 #### Long Poll
    * Not used
+
+#### Username
+   * Your Husqvarna account username
+
+#### Password
+   * Your Husqvarna account password
 
 
 ## Requirements
