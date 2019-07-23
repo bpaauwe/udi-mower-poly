@@ -288,7 +288,11 @@ class mowerNode(polyinterface.Node):
             st_type = self.st_type_p(json)
 
             try:
-                status = json['connected']
+                LOGGER.info('Connection to mower is %s' % json['connected'])
+                if json['connected']:
+                    status = 1
+                else:
+                    status = 0
                 battery = json['batteryPercent']
                 last_error = json['lastErrorCode']
                 # the timestamp is in milliseconds? which is too large
@@ -316,12 +320,13 @@ class mowerNode(polyinterface.Node):
                 LOGGER.error('Failed to parse mower status JSON')
 
         except Exception as ex:
+            LOGGER.info('In exception handler, faking mower status')
             self.setDriver('ST', 1, report=True, force=first)
             self.setDriver('GV0', 100, report=True, force=first)
             self.setDriver('GV1', 0, report=True, force=first)
             self.setDriver('GV2', 0, report=True, force=first)
             self.setDriver('GV3', 1, report=True, force=first)
-            self.setDriver('GV4', 565656565, report=True, force=first)
+            self.setDriver('GV4', 60, report=True, force=first)
             self.setDriver('GV5', 1, report=True, force=first)
             self.setDriver('GV6', 3, report=True, force=first)
             self.setDriver('GV7', 0, report=True, force=first)
