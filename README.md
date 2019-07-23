@@ -56,6 +56,9 @@ The Husqvarna automower nodeserver keeps track of the version number and when a 
 
 # Release Notes
 
+- 1.0.1 07/23/2019
+   - Change mower mode to mowing mode to better reflect what's being reported
+   - Fix connection status reporting
 - 1.0.0 07/16/2019
    - First public release
 - 0.0.2 07/02/2019
