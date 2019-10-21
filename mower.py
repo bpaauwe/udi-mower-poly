@@ -332,7 +332,7 @@ class mowerNode(polyinterface.Node):
             self.setDriver('GV7', 0, report=True, force=first)
             self.setDriver('GV8', 0, report=True, force=first)
             self.setDriver('GV9', 1, report=True, force=first)
-            LOGGER.debug('Skipping status: ' + ex.args[0])
+            LOGGER.debug('Skipping status: ' + str(ex.args[0]))
 
         # TODO: What does the response look like?  We need to translate
         # whatever we get into the numeric value that the node can
