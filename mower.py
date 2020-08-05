@@ -75,7 +75,7 @@ class Controller(polyinterface.Controller):
     def shortPoll(self):
         for node in self.nodes:
             if self.nodes[node].id == 'mower':
-                if not self.nodes[node].get_status(False)
+                if not self.nodes[node].get_status(False):
                     try:
                         self.mower = self.session.login(self.username, self.password).find_mower()
                     except:
