@@ -75,7 +75,11 @@ class Controller(polyinterface.Controller):
     def shortPoll(self):
         for node in self.nodes:
             if self.nodes[node].id == 'mower':
-                self.nodes[node].get_status(False)
+                if not self.nodes[node].get_status(False)
+                    try:
+                        self.mower = self.session.login(self.username, self.password).find_mower()
+                    except:
+                        LOGGER.error('Re-authentication failed.')
 
     def query(self):
         for node in self.nodes:
@@ -333,6 +337,8 @@ class mowerNode(polyinterface.Node):
             self.setDriver('GV8', 0, report=True, force=first)
             self.setDriver('GV9', 1, report=True, force=first)
             LOGGER.debug('Skipping status: ' + str(ex.args[0]))
+            return False
+        return True
 
         # TODO: What does the response look like?  We need to translate
         # whatever we get into the numeric value that the node can
