@@ -56,6 +56,8 @@ The Husqvarna automower nodeserver keeps track of the version number and when a 
 
 # Release Notes
 
+- 1.0.4 08/05/2020
+   - fix syntax error
 - 1.0.3 08/05/2020
    - re-authenticate if get status fails.
 - 1.0.2 10/21/2019
